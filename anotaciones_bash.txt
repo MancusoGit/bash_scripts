@@ -1,0 +1,21 @@
+$0: Contiene el nombre del script tal como fue invocado (por ejemplo, ./script.sh).
+
+    $1, $2, $3...: Contienen el primer, segundo, tercer parámetro, respectivamente.
+
+    ${10}, ${11}...: A partir del décimo parámetro, es obligatorio encerrar el número entre llaves. Si escribes $10, Bash lo interpretará como la variable $1 seguida del texto literal 0.
+
+Las variables especiales que mencionas almacenan metadatos clave sobre la ejecución y el entorno del script:
+
+    $#: Almacena la cantidad total de parámetros que el usuario pasó al script. No cuenta a $0. Es muy útil para validar si el usuario proporcionó los argumentos requeridos (por ejemplo, comprobar si $# es igual a 2).
+
+    $*: Representa todos los parámetros posicionales ($1, $2, $3, etc.) combinados en una sola cadena de texto. Si pasas tres palabras, $* las agrupa separadas por un espacio (o el primer carácter de la variable de entorno IFS).
+
+    $?: Contiene el código de salida (exit status) del último comando que se ejecutó. En sistemas Unix, un valor de 0 indica que el comando se ejecutó con éxito. Cualquier número distinto de cero (generalmente del 1 al 255) indica que ocurrió un error. Es fundamental para el manejo de errores y condicionales.
+
+    $HOME: Es una variable de entorno que contiene la ruta absoluta del directorio personal (home) del usuario que está ejecutando el script (por ejemplo, /home/usuario o /root si se ejecuta con sudo). Se usa comúnmente para guardar archivos de configuración o logs independientes para cada usuario.
+
+los parametros se pasan despues de hacer la llamada al script
+
+ej.: ./test.sh debian linux bash
+
+debian, linux y bash son parametros, que se van a alojar en $1 (debian), $2 (linux), $3 (bash).
