@@ -1,0 +1,149 @@
+Shell Scripting: escritura de programas basados en texto plano que contienen una secuencia de comandos para ser ejecutados por el interprete de comandos, el shell, nuestro caso "/bin/bash". Generalmente son para automatizar tareas del sistema operativo, manejar archivos, procesar texto y ejecutar lotes de procesos. No son compilados, son interpretados, el shell lee el archivo linea por linea en tiempo de ejecucion.
+
+Comentarios: se indican con el #, salvo en la primera linea, que siempre se pone el shebang que es #!/bin/bash.
+
+Variables: se declaran sin espacios ej.: nombre="valor" y se referencian con el signo pesos $nombre.
+
+Operaciones de E/S: para leer por teclado tenemos el comando "read", ej.: read nmombre apellido, como en este caso que le pido 2 valores, bash separa lo que se escribe usando espacios y guarda la primer palabra en nombre y el resto en apellido. Con: read -p "mensaje: " var, se puede mostrar texto e ingresar data en la misma linea.
+
+Ejecucion de comandos: una de las principales ventajas de bash es poder usar comandos que son parte de linux, como por ejemplo: echo, pwd, mkdir, chmod, ls, who, mv, rm, touch, grep, wc, date, whoami, expr, test, cut, tr, find, sleep, sort, cat, id. Tambien se pueden combinar con las pipes/tuberias (generalmente se usa grep, cut y tr)
+
+Pipes/Tuberias: regla tecnica clave, un comando puede ir a la izquierda del pipe (comando | ...) si imprime resultados en la salida estandar (stdout) y puede ir a la derecha (... | comando) solo si esta programado para leer datos desde la entrada estandar (stdin)
+
+Explicacion de comandos y pipes:
+
+Comandos de informacion y salida (generadores para pipes)
+
+- echo: imprime un texto o el valor de variables en la salida estandar. Se conecta con pipes a la izquierda (envia texto al pipe), no lee de la derecha.
+
+- pwd: muestra la ruta absolita del directorio actual. Se conecta con pipes a la izquierda (envia la ruta al pipe).
+
+- ls: lista los archivos y subdirectorios de un directorio/carpeta. Se conecta con pipes a la izquierda (envia listado para filtrarlo o contarlo).
+
+- who: muestra que usuarios estan conectados actualmente al sistema. Se conecta con pipes a la izquierda (muy usado pra filtrar usuarios).
+
+- whoami: imprime el nombre del usuario efectivo actual. Se conecta con pipes a la izquierda.
+
+- date: muestra o configura la fecha y hora del sistema. Se conecta con pipes a la izquierda.
+
+- id: muestra el UID, GID y los grupos a los que pertenece un usuario. Se conecta con pipes a la izquierda.
+
+- find: busca archivos y directorios recursivamente segun criterios (nombre, tipo, permisos, etc.). Se conecta con pipes a la izquierda (envia la lista de rutas encontradas).
+
+
+Comandos de filtros y procesadores de texto (el corazon de los pipes)
+
+- grep: busca y filtra lineas que coincidan con un patron o expresion regular. Se conectan con pipes en ambos lados (lee del pipe o de un archivo y envia el resultado a otro pipe)
+
+- wc: cuenta lineas (-l), palabras (-w) o bytes/caracteres (-c). Se conectan con pipes en ambos lados (casi siempre se usa al final del ppipe para contar resultados).
+
+- cut: extrae columnas o campos especificos de cada linea segun un delimitador (-d). Se conectan con pipes de ambos lados.
+
+- tr: traduce (reemplaza) o elimina (-d) caracteres individuales. Se conectan con pipes de ambos lados (obligatorio recibir por stdin/pipe), no acepta nombres de archivo como parametro.
+
+- sort: ordena alfabetica o numericamente (-n) las lineas que recibe. Se conectan con pipes de ambos lados.
+
+- cat: concatena y muestra el contenido de uno o más archivos. Se conectan con pipes de ambos lados (suele iniciar un pipe leyendo un archivo, o leer del pipe si no se le pasan argumentos).
+
+Comandos de gestion de archivos (operan por argumentos):
+
+[Ninguno de estos comandos se conectan con pipes]
+
+- mkdir: crea uno o mas directorios nuevos (-p crea padres si no existen).
+
+- chmod: cambia los permisos de lectura (r), escritura (w) y ejecucion (x) de archivos/directorios.
+
+- mv: Mueve o renombra archivos y directorios.
+
+- rm: elimina archivos o directorios (-r para recursivo, -f para forzar).
+
+- touch: crea un archivo vacio si no existe, o actualiza su fecha de modificacion si ya existe.
+
+Comandos de evaluacion y control de flujo del script
+
+- expr: evalua expresiones aritmeticas o de cadenas e imprime el resultado. Se conecta con pipes a la izquierda (imprime el resultado en "stdout")
+
+- test: evalua una condicion (archivos, strings, numeros) y devuelve un codigo de estado (0 = true, 1 = false) sin imprimir nada. No se conecta con pipes.
+
+- sleep: pausa la ejecucion del script durante una cantidad determinada de segundos. No se conecta con pipes.
+
+Comando exit: finaliza inmediatamente la ejecucion del script y devuelve un codigo de estado al proceso padre (la terminal u otro script). Recibe un numero entero entre 0 u 255, exit 0 indica que termino el script normalmente, y cualquier otro numero indica que ocurrio un error especifico.
+
+Sustitucion de comandos
+
+Backquotes `comando`: ej.: echo "su usuario es `whoami`" 
+las comillas invertidas indican a bash que primero ejecute el comando en un subproceso y reemplace esa expresion por su salida estandar antes de ejecutar otro comando.
+Otra forma de hacer lo mismo es con $(comando).
+
+
+Parametrizacion y Variables Especiales
+
+Cuando se ejecuta un script desde consola, ej.: ./script.sh arg1 arg2
+Bash asigna automaticamente los argumentos a variables posicionales.
+
+- $0 : nombre del script que se esta ejecutando.
+
+- $1, $2, ... , ${10}, ... : parametros posicionales (del primero en adelante). A partir del 10 se usan llaves {}.
+
+- $# : cantidad total de parametros enviados al script (fundamental para validar antes de operar, ej.: if [ $# -ne 2 ])
+
+- $* y $@ : contienen todos los parametros recibidos en una sola estructura (muy util para iterar con un for arg in "$@".
+
+- $? : codigo de retorno (exit status) del ultimo comando o funcion ejecutada (0 es verdadero o exitoso, distinto de 0 es falso/error).
+
+- $HOME : ruta absoluta del directorio personal del usuario actual (ej.: /home/tu_usuario).
+
+
+Tipos de Datos en Bash
+
+tipado: bash NO es fuertemente tipado, es de tipado debil/no tipado. Todas las variables se almacenan internamente como cadenas de caracteres (strings) y solo se tratan como enteros si se las somete a operadores aritmeticos.
+
+variables de entorno: son variables globales, definidas por el sistema ($HOME, $PATH, $USER, $RANDOM).
+
+arreglos (vectores indexados): bash soporta arreglos unidimensionales indexados desde el 0 (no tienen limite fijo de tamañp y pueden tener posiciones vacias/dispersas).
+
+ejs.: 
+
+array=() -> declaracion / inicializacion vacia.
+
+nums=(10 3 5 7 9) -> declaracion con valores.
+
+operaciones con arrays:
+
+echo "${nums[0]}" -> acceder a una posicion, las llaves son obligatorias.
+
+echo "${nums[$i]}" -> asi se hace cuando usas un iterador para acceder a variables.
+
+echo "${nums[@]}" -> obtener todos los elementos del arreglo. Tambien sirve ${nums[*]}
+
+echo "${#nums[@]}" -> obtener la longitud (cantidad de elementos) del arreglo.
+
+echo "${!nums[@]} -> obtener todos los indices activos del arreglo (importante si se borraon elementos).
+
+array+=("nuevo elemento") -> agregar un elemento al final.
+
+unset "array[$pos]" -> eliminar un elemento en la posicion 'pos'.
+
+nota: unset deja un "hueco" en los indices. Si en la pila se necesita reindexar para que los indices vuelvan a ser continuos se  usa: array=("${array[@]}").
+
+
+
+Comparacion de variables y aritmetica
+
+Comparacion: se pueden usar los corchetes [] o el comando test (son equivalentes).
+Para usar los corchetes siempre debe haber un espacio despues de [ y antes de ], asi como alrededor de los operadores, ej.: [ "$a" -eq "$b" ]
+equivalente a: test "$a" -eq "$b"
+
+evaluacion numerica: -eq (igual), -ne (distinto), -gt (mayor), -ge (mayor o igual), -lt (menor), -le (menor o igual).
+
+evaluacion de cadenas (strings): = o == (iguales), != (distintas), -z "$str" (vacia), -n "$str" (no vacia).
+
+evaluacion de archivos: 
+
+
+
+
+
+
+
+
