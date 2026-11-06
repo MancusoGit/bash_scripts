@@ -138,12 +138,98 @@ evaluacion numerica: -eq (igual), -ne (distinto), -gt (mayor), -ge (mayor o igua
 
 evaluacion de cadenas (strings): = o == (iguales), != (distintas), -z "$str" (vacia), -n "$str" (no vacia).
 
-evaluacion de archivos: 
+evaluacion de archivos: -e (existe), -f (existe y es archivo regular), -d (es directorio), -r (permiso lectura), -w (permiso escritura), -x (permiso ejecucion).
+
+operadores logicos en test: ! (negacion), -a (AND logico), -o (OR logico), se puede concatenar comandos con && y ||, ej.: [ -f "$arch" ] && [ -r "$arch" ].
+
+evaluacion aritmetica con expr (se usa para hacer cuentas).
+
+suma=$(expr $num1 + $num2)
+resta=$(expr $num1 - $num2)
+multiplicacion=$(expr $num1 \* $num2) -> importante para multiplicar poner primero la barra invertida.
+division=$(expr $num1 / $num2)
+resto=$(expr $num1 % $num2)
+
+
+Estructuras de Control
+
+Para terminar un condicional como if, select o case, se tiene que terminar el ultimo condicional con el nombre escrito al reves (para un if al final poner fi, y para elselect y case al final poner esac).
+
+Select - Ejemplo
+
+select opcion in "List" "Lugar" "Quien" "Salir"; do
+	case $opcion in
+		"List")
+			ls -l
+			;;
+		"Lugar")
+			pwd
+			;;
+		"Quien")
+			who
+			;;
+		"Salir"
+			echo "saliendo..."
+			break #rompe el bucle select
+			;;
+		*)
+			echo "opcion invalida."
+			;;
+	esac
+done
+
+
+if - Ejemplo
+
+if [ "$num" -gt 0 ]; then
+	echo "numero positivo"
+elif [ "$num" -lt 0 ]; then
+	echo "numero negativo"
+else
+	echo "numero es igual a 0"
+fi
+
+
+case - Ejemplo
+
+case "$var" in 
+	"opc1")
+		echo "elegiste opcion 1"
+		;;
+	"opc2")
+		echo "elegiste opcion 2"
+		;;
+	*)
+		echo "opcion invalida."
+		;;
+esac
+
+
+for - Ejemplo
+
+#iterar sobre un rango numerico clasico
+for i in {1..5}; do
+	echo "iter: $i"
+done
+
+#iterar sobre una lista
+for elem in "obj1" "obj2" "objt3"; do
+	echo "contenido: $elem"
+done
+
+
+while - Ejemplo
+
+contador=0
+
+while [ "$contador" -le 3 ]; do
+	echo "iteracion: $contador"
+	contador=$((contador + 1))
+done
 
 
 
-
-
+[Importante: despues de una comparacion [ algo ] poner siempre un ; ej.: [ "$num" -lt 0 ]; -> siempre va.]
 
 
 
